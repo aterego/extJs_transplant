@@ -1,0 +1,242 @@
+
+								{
+									xtype:'panel',
+									y: 0,
+									padding: '5 0 10 0',
+									html:'<div><a class="tr_list" id="tr_list" href="#" onClick="javascript:OpenTreatmentList2(' + data.id + ','+ data.reg_id +');">იმუნოსუპრესია</a></div>',
+									border: 0,
+								},
+								{
+									xtype:'grid',
+									id:'treatment',
+									collapsible:true,
+									autoScroll:true,
+									store:storeTreatment,
+									flex:1,
+									columns:[{
+										text:'თარიღი',
+										flex:5/80,
+										dataIndex:'date'
+									},{
+										text:'მედიკამენტი',
+										flex:25/80,
+										dataIndex:'med',
+										/*
+										 renderer: function(value, metadata) {
+										 metadata.style = 'white-space: normal;';
+										 return value;
+										 }
+										 */
+									},{
+										text:'დოზა',
+										flex:20/80,
+										dataIndex:'dosage'
+									}],
+
+
+									listeners : {
+										itemdblclick: function(dv, record, item, index, e) {
+											var grid = Ext.getCmp('treatment');
+											var model = grid.getSelectionModel().getSelection();
+											if(model[0].data != null){
+												if(acc!='r') {
+													model_edit = model[0].data;
+													CreateEditTreatment(model_edit);
+												}
+											}
+										}
+									},
+
+									viewConfig: {
+										enableTextSelection: true,
+										listeners : {
+											itemcontextmenu: function(view, record, item, index,          e){
+												e.stopEvent();
+												if(acc!='r')
+												 rightClickTreatment.showAt(e.getXY());
+											}
+										}
+									},
+									tbar:[{
+										xtype:'button',
+										text:'Add',
+										id:'btn-c-add-treatment',
+										icon: '../../resources/images/plus.png',
+										handler:function(btn){
+											CreateAddTreatment(data.id, reg_id);
+										},
+										listeners: {
+											beforerender: function() {
+												if(acc == 'r') {
+													var button = Ext.getCmp('btn-c-add-treatment');
+													button.hide();
+												}
+											},
+											afterrender: function() {
+												Ext.create('Ext.tip.ToolTip',{
+													target:'btn-c-add-treatment',
+													html: 'ახალი მკურნალობა',
+													anchor: 'top'
+												});
+											}
+										}
+									},{
+										xtype:'tbseparator',
+									},{
+										xtype:'button',
+										text:'Edit',
+										id:'btn-c-edit-treatment',
+										icon: '../../resources/images/edit.png',
+										handler:function(btn){
+											var grid = Ext.getCmp('treatment');
+											var model = grid.getSelectionModel().getSelection();
+											if(model[0].data != null){
+												model_edit=model[0].data;
+												CreateEditTreatment(model_edit);
+											}
+										},
+										listeners: {
+											beforerender: function() {
+												if(acc == 'r') {
+													var button = Ext.getCmp('btn-c-edit-treatment');
+													button.hide();
+												}
+											},
+											afterrender: function() {
+												Ext.create('Ext.tip.ToolTip',{
+													target:'btn-c-edit-treatment',
+													html: 'რედაქტირება',
+													anchor: 'top'
+												});
+											}
+										}
+									},{
+										xtype:'tbseparator',
+									},{
+										xtype:'button',
+										text:'Delete',
+										id:'btn-c-treatment',
+										icon: '../../resources/images/cancel.png',
+										handler:function(btn){
+											var grid = Ext.getCmp('treatment');
+											var model = grid.getSelectionModel().getSelection();
+											if (model.length > 0) {
+												Ext.Msg.show({
+													title: 'Confirm',
+													msg: 'The record will be deleted?',
+													icon: Ext.Msg.QUESTION,
+													buttons: Ext.Msg.YESNO,
+													fn: function (btn) {
+														if (btn == 'yes') {
+															Ext.Ajax.request({
+																url: '../../server/list/treatment.php?act=Delete',
+																method: 'POST',
+																params:{
+																	param_id:model[0].data.patient_id,
+																	fc:model[0].data.fc
+																},
+																success: function (response) {
+																	var result = Ext.JSON.decode(response.responseText);
+																	if (result.success) {
+																		Ext.Msg.show({
+																			title: 'Information',
+																			icon: Ext.Msg.INFO,
+																			msg: 'Record successfully removed!',
+																			buttons: Ext.Msg.OK,
+																			fn: function (btn) {;
+																				grid.getStore().reload();
+																				grid.getView().refresh();
+																			}
+																		});
+																	} else {
+																		Ext.Msg.show({
+																			title: 'Error',
+																			icon: Ext.Msg.ERROR,
+																			msg: 'Record failed deleted! '+ result.responseStatusObject.reason,
+																			buttons: Ext.Msg.OK,
+																			fn: function () {
+																				var grid = Ext.getCmp('treatment').getStore();
+																				store.load();
+																			}
+																		});
+																	}
+																},
+																failure: function (response) {
+																	console.log('Failed : '+ response);
+
+																}
+															});
+
+														}
+
+													}
+
+												});
+
+
+											}
+
+										},
+										listeners: {
+											beforerender: function() {
+												if(acc == 'r') {
+													var button = Ext.getCmp('btn-c-treatment');
+													button.hide();
+												}
+											},
+											afterrender: function() {
+												Ext.create('Ext.tip.ToolTip',{
+													target:'btn-c-treatment',
+													html: 'წაშლა',
+													anchor: 'top'
+												});
+											}
+										}
+									},'->',{
+										xtype:'textfield',
+										fieldLabel:'ძიება',
+										listeners:{
+											change: function(field, newValue, oldValue, options){
+												var grid = Ext.getCmp('treatment');
+												grid.store.clearFilter();
+
+												if (newValue) {
+													var matcher = new RegExp(Ext.String.escapeRegex(newValue), "i");
+													grid.store.filter({
+														filterFn: function(record) {
+															return matcher.test(record.get('med')) ||
+																matcher.test(record.get('dosage'));
+														}
+													});
+												}
+											}
+										}
+									}
+									,
+										{
+											text: 'Print',
+											iconCls: 'icon-print',
+											handler : function(){
+												var grid = Ext.getCmp('treatment');
+												Ext.ux.grid.Printer.printAutomatically = false;
+												Ext.ux.grid.Printer.print(grid);
+											}
+										}
+										,
+
+										{
+											text: 'Export',
+											iconCls: 'icon-excel',
+											handler : function(){
+												var grid = Ext.getCmp('treatment');
+												grid.doExcelExport({
+													apiKey: '2109e0c559c4900aa772f2648437c5c0',
+													startCell: 'B8',
+													templatefile: "temp.xlsx",
+													destinationfile: 'მკურნალობა_Liv_' + data.id + '.xlsx'
+												});
+											}
+										}
+
+									]
+								}]
