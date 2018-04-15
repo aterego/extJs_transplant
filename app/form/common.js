@@ -1363,7 +1363,7 @@ requires:[
 
 
 		var categories = Ext.create('Ext.panel.Panel', {
-			padding: '7 0 7 0' ,
+			padding: '17 0 17 0' ,
 			//margin: '4 0 4 0',
 			width: '100%',
 			layout: 'fit',
@@ -1391,7 +1391,7 @@ requires:[
 
 				var dstr = "აღრიცხვაზე აყვანის თარიღი";
 				var str = " გადანერგილები - ";
-				if (result[0].prefix.indexOf('Arch') !== -1)  {
+				if (result[0].prefix2.indexOf('Arch') !== -1)  {
 					str =  " - ";
 					dstr = "აღრიცხვიდან მოხსნის თარიღი";
 				}
@@ -1415,12 +1415,25 @@ requires:[
 				});
 				categories.doLayout();
 				*/
+				if (result[0].prefix2.indexOf('Arch') !== -1) {
+					categories.add(new Ext.form.Label({
+						html: '<div style="background: blue"><div style="float:left">' + result[0].prefix2 + str + result[0].category_name_2 + ';</div>' +
+						'<div style="float:right; margin-right:15px"><a class="x-btn x-unselectable x-btn-default-small x-icon x-btn-icon x-btn-default-small-icon" id="edit_date" style="width: 16px; height: 16px; " hidefocus="on" unselectable="on" tabindex="0" href="#" onClick="javascript:OpenDateEdit(' + data.id + ',' + result[0].category_id_2 + ',\'' + result[0].date2 + '\');"><span role="presentation" class="x-btn-wrap" unselectable="on" style="height: 10px;"><span class="x-btn-button" role="presentation" style="height: 10px;"><span class="x-btn-inner x-btn-inner-center" unselectable="on" style="line-height: 16px;">&nbsp;</span><span role="presentation" class="x-btn-icon-el  " unselectable="on" style="background-image:url(../../resources/images/edit3.png);">&nbsp;</span></span></span></a></div>' +
+						'<div style="float:right; margin-right:5px">' + dstr + ' ' + result[0].date2 + '</div>' +
+						'</div> ',
+						margin: '7',
+						style: "position: relative; top:0px"
+					}));
+				}
+
+
 				categories.add(new Ext.form.Label({
-					html: '<div><div style="float:left">' + result[0].prefix + str + result[0].category_name + ';</div>' +
+					html: '<div style="background: red"><div style="float:left">' + result[0].prefix + str + result[0].category_name + ';</div>' +
 					'<div style="float:right; margin-right:15px"><a class="x-btn x-unselectable x-btn-default-small x-icon x-btn-icon x-btn-default-small-icon" id="edit_date" style="width: 16px; height: 16px; " hidefocus="on" unselectable="on" tabindex="0" href="#" onClick="javascript:OpenDateEdit(' + data.id + ',' + result[0].category_id + ',\'' + result[0].date + '\');"><span role="presentation" class="x-btn-wrap" unselectable="on" style="height: 10px;"><span class="x-btn-button" role="presentation" style="height: 10px;"><span class="x-btn-inner x-btn-inner-center" unselectable="on" style="line-height: 16px;">&nbsp;</span><span role="presentation" class="x-btn-icon-el  " unselectable="on" style="background-image:url(../../resources/images/edit3.png);">&nbsp;</span></span></span></a></div>' +
-					'<div style="float:right; margin-right:5px">' + dstr + ' ' + result[0].date + '</div>' +
+					'<div style="float:right; margin-right:5px">' + "აღრიცხვაზე აყვანის თარიღი" + ' ' + result[0].date + '</div>' +
 					'</div> ',
-					margin: '7'
+					margin: '7',
+					style: "position: relative; top:20px"
 				}));
 
 

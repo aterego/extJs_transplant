@@ -68,7 +68,7 @@ Ext.define('Application.view.layout.Center', {
                    xtype: 'component',
                    autoEl: {
                       tag: 'iframe',
-                      src: 'http://localhost/example/app/module/'+module.id+'.php'
+                      src: 'http://localhost/extjs_transplant/app/module/'+module.id+'.php'
                     }
 				}]
             });

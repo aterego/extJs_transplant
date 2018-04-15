@@ -212,7 +212,8 @@ Ext.onReady(function() {
         valueField    : 'clinic_id',
         editable      : true,
         forceSelection: true,
-        queryMode: 'local'
+        queryMode: 'local',
+        tpl: '<tpl for="."><div class="x-boundlist-item">{clinicdesc}</div><tpl><hr /></tpl></tpl>',
     });
 
     var comboDiagnosis = new Ext.form.ComboBox({
@@ -273,7 +274,8 @@ Ext.onReady(function() {
         valueField    : 'condition_id',
         editable      : true,
         forceSelection: true,
-        queryMode: 'local'
+        queryMode: 'local',
+        tpl: '<tpl for="."><div class="x-boundlist-item">{condition}</div><tpl><hr /></tpl></tpl>',
     });
 
     //Ext.select('.dd').on('click', c);
@@ -670,6 +672,8 @@ Ext.onReady(function() {
                         width: 300
 
                     }
+                    ,
+
 
                 ]
             }

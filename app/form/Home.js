@@ -1865,7 +1865,8 @@ itemTpl: [
             storeHome5.filter([
                 {
                     fn   : function(record) {
-                        total5 = total5 + record.get('count');
+                        if(record.index!=0)
+                            total5 = total5 + record.get('count');
                         return 2;
                     },
                     scope: this

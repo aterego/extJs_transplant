@@ -26,7 +26,7 @@ if(!empty($act)){
 	$mod="tab-city_";
 	switch($act){
 		case "View":
-			$query= $mysqli->query("SELECT * FROM a_removals");
+			$query= $mysqli->query("SELECT * FROM a_removals ORDER BY `name`");
 			if($query){
 				while($r = $query->fetch_array()){
 					$temp_record[]=array(

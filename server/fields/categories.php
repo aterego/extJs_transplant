@@ -49,27 +49,56 @@ if(!empty($act)){
 		        else
 		            $whereClause = " WHERE ac.id=" . $_POST['param_id'];
 
-                $query = $mysqli->query("SELECT ac.m,ac.reg_id,c.parent_category_id,c.category_name, c.prefix, ac.md, ac.id 
+
+		            $sql = "SELECT ac.m,ac.reg_id,c.parent_category_id,c.category_name, c.prefix, ac.md, ac.id 
+                                            FROM ( SELECT pc.`patient_id` as id, min(pc.`category_id`) as m, reg_id, min(date) as md
+                                            FROM `a_patient_category` pc GROUP BY id )
+                                             AS ac 
+                                             inner join categories as c on c.category_id=ac.m ".$whereClause;
+
+		            $query = $mysqli->query($sql);
+                    if($query){
+                        $c = 0;
+                        while($r = $query->fetch_array()){
+
+                            $category_id = $r['m'];
+                            $parent_category_id= $r['parent_category_id'];
+                            $category_name  = $r['category_name'];
+                            $prefix = $r['prefix'];
+                            $date = (abs($r['md'])< 1000)? "-" : date('d.m.Y', $r['md']);
+                        }
+
+                    }
+
+
+		            $sql = "SELECT ac.m,ac.reg_id,c.parent_category_id,c.category_name, c.prefix, ac.md, ac.id 
                                             FROM ( SELECT pc.`patient_id` as id, max(pc.`category_id`) as m, reg_id, max(date) as md
                                             FROM `a_patient_category` pc GROUP BY id )
                                              AS ac 
-                                             inner join categories as c on c.category_id=ac.m ".$whereClause);
+                                             inner join categories as c on c.category_id=ac.m ".$whereClause;
 
-                if($query){
-                    $c = 0;
-                    while($r = $query->fetch_array()){
-                        $temp_record[]=array(
-                            "category_id"=>$r['m'],
-                            "reg_id"=>$r['reg_id'],
-                            "parent_category_id"=>$r['parent_category_id'],
-                            "category_name"=>$r['category_name'],
-                            "prefix"=>$r['prefix'],
-                            "patient_id"=>$r['id'],
-                            "date"=>(abs($r['md'])< 1000)? "-" : date('d.m.Y', $r['md']),
-                        );
+                    $query = $mysqli->query($sql);
+
+                    if($query){
+                        $c = 0;
+                        while($r = $query->fetch_array()){
+                            $temp_record[]=array(
+                                "category_id"=>$category_id,
+                                "category_id_2"=>$r['m'],
+                                "reg_id"=>$r['reg_id'],
+                                "parent_category_id"=>$parent_category_id,
+                                "parent_category_id_2"=>$r['parent_category_id'],
+                                "category_name"=>$category_name,
+                                "category_name_2"=>$r['category_name'],
+                                "prefix"=>$prefix,
+                                "prefix2"=>$r['prefix'],
+                                "patient_id"=>$r['id'],
+                                "date"=> $date,
+                                "date2"=>(abs($r['md'])< 1000)? "-" : date('d.m.Y', $r['md']),
+                            );
+                        }
+                        $response=$temp_record;
                     }
-                    $response=$temp_record;
-                }
 
 
             }
@@ -80,12 +109,17 @@ if(!empty($act)){
                         while($r = $query->fetch_array()){
                             $temp_record[]=array(
                                 "category_id"=>$r['category_id'],
+                                "category_id_2"=>$r['category_id'],
                                 "reg_id"=>$r['reg_id'],
                                 "parent_category_id"=>$r['parent_category_id'],
+                                "parent_category_id_2"=>$r['parent_category_id'],
                                 "category_name"=>$r['category_name'],
+                                "category_name_2"=>$r['category_name'],
                                 "prefix"=>$r['prefix'],
+                                "prefix2"=>$r['prefix'],
                                 "patient_id"=>$r['patient_id'],
                                 "date"=>(abs($r['date'])< 1000)? "-" : date('d.m.Y', $r['date']),
+                                "date2"=>(abs($r['date'])< 1000)? "-" : date('d.m.Y', $r['date']),
                             );
                         }
                         $response=$temp_record;
